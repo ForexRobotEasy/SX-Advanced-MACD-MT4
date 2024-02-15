@@ -1,0 +1,67 @@
+mql5
+//+------------------------------------------------------------------+
+//|                  SX Advanced MACD MT4                             |
+//|                  Developer: Forex Robot Easy Team                 |
+//|                  Website: forexroboteasy.com                      |
+//+------------------------------------------------------------------+
+
+#property copyright 'Forex Robot Easy Team'
+#property link      'forexroboteasy.com'
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    // Add necessary indicators
+    int shortMACD = iMACD(_Symbol, _Period, 12, 26, 9, PRICE_CLOSE);
+    int longMACD = iMACD(_Symbol, _Period, 24, 52, 18, PRICE_CLOSE);
+
+    // Set indicator colors
+    SetIndexStyle(0, DRAW_HISTOGRAM);
+    SetIndexBuffer(0, shortMACD);
+    SetIndexStyle(1, DRAW_HISTOGRAM);
+    SetIndexBuffer(1, longMACD);
+
+    return INIT_SUCCEEDED;
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Remove indicators
+    IndicatorRelease(0);
+    IndicatorRelease(1);
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Calculate MACD values
+    double shortMACDValue = iMACD(_Symbol, _Period, 12, 26, 9, PRICE_CLOSE, MODE_MAIN, 0);
+    double longMACDValue = iMACD(_Symbol, _Period, 24, 52, 18, PRICE_CLOSE, MODE_MAIN, 0);
+
+    // Compare MACD values and generate signals
+    if (shortMACDValue > longMACDValue)
+    {
+        // Place buy order
+        OrderSend(_Symbol, OP_BUY, 0.01, Ask, 3, 0, 0, 'SX Advanced MACD MT4', MagicNumber);
+    }
+    else if (shortMACDValue < longMACDValue)
+    {
+        // Place sell order
+        OrderSend(_Symbol, OP_SELL, 0.01, Bid, 3, 0, 0, 'SX Advanced MACD MT4', MagicNumber);
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Expert start function                                             |
+//+------------------------------------------------------------------+
+void OnStart()
+{
+    // Nothing to do here
+}
